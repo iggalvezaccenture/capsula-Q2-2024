@@ -57,7 +57,7 @@ class CourseControllerTest {
 
     @Test
     public void givenValidData_WhenDeletingCourse_ThenReturnResponse() throws Exception {
-        Mockito.when(courseService.deleteCourse(Mockito.anyString()))
+        Mockito.when(courseService.deleteCourse(Mockito.any(UUID.class)))
                 .thenReturn(this.createValidCourseDeleteResponseDTO());
 
         mvc.perform(MockMvcRequestBuilders
@@ -71,7 +71,7 @@ class CourseControllerTest {
 
     private CourseDeletedResponseDTO createValidCourseDeleteResponseDTO() {
         return CourseDeletedResponseDTO.builder()
-                .courseDeletedId(UUID.randomUUID().toString()).build();
+                .courseDeletedId(UUID.randomUUID()).build();
     }
 
     private CourseCreationRequestDTO createValidCourseCreationRequest(){

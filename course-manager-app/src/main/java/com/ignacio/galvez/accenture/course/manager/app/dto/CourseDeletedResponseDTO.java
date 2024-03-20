@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Data
 @AllArgsConstructor
@@ -14,5 +16,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CourseDeletedResponseDTO {
 
-    String courseDeletedId;
+    private UUID courseDeletedId;
 }

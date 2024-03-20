@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping(Endpoints.COURSE_PATH)
 @AllArgsConstructor
@@ -36,10 +38,10 @@ public class CourseController {
     }
 
     @DeleteMapping(Endpoints.COURSE_DELETING)
-    public Mono<CourseDeletedResponseDTO> deleteCourse(@PathVariable(value = "courseId") String courseId){
-        log.info(COURSE_DELETE_WITH_ID, StringUtils.normalizeSpace(courseId));
+    public Mono<CourseDeletedResponseDTO> deleteCourse(@PathVariable(value = "courseId") UUID courseId){
+        log.info(COURSE_DELETE_WITH_ID, StringUtils.normalizeSpace(courseId.toString()));
         Mono<CourseDeletedResponseDTO> courseDeletedResponse =  Mono.just(courseService.deleteCourse(courseId));
-        log.info(COURSE_ID_SUCCESSFULLY_DELETED,StringUtils.normalizeSpace(courseId));
+        log.info(COURSE_ID_SUCCESSFULLY_DELETED,StringUtils.normalizeSpace(courseId.toString()));
         return courseDeletedResponse;
     }
 

@@ -4,9 +4,11 @@ import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponse
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDeletedResponseDTO;
 
+import java.util.UUID;
+
 public interface CourseService {
 
     CourseCreatedResponseDTO createCourse(CourseCreationRequestDTO courseCreationRequestDTO);
 
-    CourseDeletedResponseDTO deleteCourse(String courseId);
+    CourseDeletedResponseDTO deleteCourse(UUID courseId);
 }

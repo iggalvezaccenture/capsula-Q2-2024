@@ -52,9 +52,9 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDeletedResponseDTO deleteCourse(String courseId) {
+    public CourseDeletedResponseDTO deleteCourse(UUID courseId) {
         try {
-            Optional<Course> courseOptional = this.courseRepository.findById(UUID.fromString(courseId));
+            Optional<Course> courseOptional = this.courseRepository.findById(courseId);
             if (courseOptional.isEmpty()) {
                 throw new RuntimeException();
             }
