@@ -4,6 +4,7 @@ import com.ignacio.galvez.accenture.course.manager.app.domain.model.Course;
 import com.ignacio.galvez.accenture.course.manager.app.domain.repository.CourseRepository;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDeletedResponseDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +30,7 @@ class CourseServiceImplTest {
     private CourseCreationRequestDTO courseCreationRequestDTO;
 
     private Course course;
+
     @BeforeEach
     void setUp() {
         this.courseCreationRequestDTO = Mockito.mock(CourseCreationRequestDTO.class);
@@ -41,5 +44,16 @@ class CourseServiceImplTest {
         CourseCreatedResponseDTO courseCreatedResponseDTO = this.courseService.createCourse(this.courseCreationRequestDTO);
         Assertions.assertEquals(course.getId(),courseCreatedResponseDTO.getUuid());
     }
+
+
+    @Test
+    public void givenValidData_WhenDeletingCourse_ThenCreateCourse(){
+        UUID id = UUID.randomUUID();
+        Mockito.when(this.courseRepository.findById(Mockito.any())).thenReturn(Optional.of(this.course));
+        CourseDeletedResponseDTO courseDeletedResponseDTO = this.courseService.deleteCourse(id);
+        Assertions.assertEquals(id,courseDeletedResponseDTO.getCourseDeletedId());
+    }
+
+
 
 }

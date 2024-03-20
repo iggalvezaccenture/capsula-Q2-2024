@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ignacio.galvez.accenture.course.manager.app.controller.constants.Endpoints;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDeletedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.service.CourseService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +17,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import reactor.core.publisher.Flux;
 
+import java.util.Collections;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +39,7 @@ class CourseControllerTest {
     private CourseService courseService;
 
     private CourseCreationRequestDTO courseCreationRequestDTO;
+
     @BeforeEach
     void setUp() {
 
@@ -61,7 +66,7 @@ class CourseControllerTest {
                 .thenReturn(this.createValidCourseDeleteResponseDTO());
 
         mvc.perform(MockMvcRequestBuilders
-                        .delete(Endpoints.COURSE_PATH + Endpoints.COURSE_DELETING.replace("{courseId}",UUID.randomUUID().toString()))
+                        .delete(Endpoints.COURSE_PATH + Endpoints.COURSE_DELETING.replace("{courseId}", UUID.randomUUID().toString()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(this.createValidCourseDeleteResponseDTO())))
                 .andExpect(status().isOk())
@@ -69,12 +74,51 @@ class CourseControllerTest {
 
     }
 
+
+
+    @Test
+    public void givenRequest_WhenQueryingCourseList_ThenReturnResponse() throws Exception {
+        Mockito.when(courseService.findAll()).thenReturn(this.createCourseListResponse());
+
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get(Endpoints.COURSE_PATH + Endpoints.COURSE_LIST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(this.createCourseListResponse())))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+
+    @Test
+    public void givenRequest_WhenQueryingCourseByName_ThenReturnResponse() throws Exception {
+        Mockito.when(courseService.findCourseByName(Mockito.anyString())).thenReturn(this.createCourseDTOResponse());
+
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get(Endpoints.COURSE_PATH + Endpoints.COURSE.replace("{name}","oop"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(this.createCourseDTOResponse())))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+    private CourseDTO createCourseDTOResponse() {
+        return CourseDTO.builder().id(UUID.randomUUID())
+                .name("OOP")
+                .category("programming")
+                .link("/oop")
+                .build();
+    }
+
     private CourseDeletedResponseDTO createValidCourseDeleteResponseDTO() {
         return CourseDeletedResponseDTO.builder()
                 .courseDeletedId(UUID.randomUUID()).build();
     }
 
-    private CourseCreationRequestDTO createValidCourseCreationRequest(){
+    private CourseCreationRequestDTO createValidCourseCreationRequest() {
         return CourseCreationRequestDTO.builder()
                 .name("OOP")
                 .category("programming")
@@ -85,14 +129,24 @@ class CourseControllerTest {
 
     private CourseCreatedResponseDTO createValidCourseCreationResponseDTO() {
         return CourseCreatedResponseDTO.builder().uuid(
-                UUID.randomUUID())
-                        .name("OOP")
-                        .category("programming")
-                        .link("/oop")
-                        .build();
+                        UUID.randomUUID())
+                .name("OOP")
+                .category("programming")
+                .link("/oop")
+                .build();
 
     }
 
+    private Flux<CourseDTO> createCourseListResponse() {
+        return Flux.fromStream(Stream.of(CourseDTO
+                        .builder()
+                        .id(UUID.randomUUID())
+                        .name("OOP programming")
+                        .link("/courses/oop/")
+                        .documents(Collections.singletonList("Introduction to oriented object programming"))
+                        .build()
+                ));
+    }
 
 
 }

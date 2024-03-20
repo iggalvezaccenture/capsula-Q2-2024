@@ -4,6 +4,7 @@ package com.ignacio.galvez.accenture.course.manager.app.controller;
 import com.ignacio.galvez.accenture.course.manager.app.controller.constants.Endpoints;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDeletedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.service.CourseService;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -43,6 +45,22 @@ public class CourseController {
         Mono<CourseDeletedResponseDTO> courseDeletedResponse =  Mono.just(courseService.deleteCourse(courseId));
         log.info(COURSE_ID_SUCCESSFULLY_DELETED,StringUtils.normalizeSpace(courseId.toString()));
         return courseDeletedResponse;
+    }
+
+    @GetMapping(Endpoints.COURSE_LIST)
+    public Flux<CourseDTO> getCoursesList(){
+        log.info("searching courses begin");
+        Flux<CourseDTO> coursesListResponse = this.courseService.findAll();
+        log.info("searching courses finished");
+        return coursesListResponse;
+    }
+
+    @GetMapping(Endpoints.COURSE)
+    public Mono<CourseDTO> getCourse(@PathVariable(value = "name") String courseName){
+        log.info("querying course with name {} ",StringUtils.normalizeSpace(courseName));
+        Mono<CourseDTO> response = Mono.just(this.courseService.findCourseByName(courseName));
+        log.info("course with name {} successfully  retrieved",StringUtils.normalizeSpace(courseName));
+        return response;
     }
 
 }
