@@ -1,6 +1,7 @@
 package com.ignacio.galvez.accenture.course.manager.app.controller;
 
 
+import com.ignacio.galvez.accenture.course.manager.app.Exception.MissingCourseException;
 import com.ignacio.galvez.accenture.course.manager.app.controller.constants.Endpoints;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
@@ -40,7 +41,7 @@ public class CourseController {
     }
 
     @DeleteMapping(Endpoints.COURSE_DELETING)
-    public Mono<CourseDeletedResponseDTO> deleteCourse(@PathVariable(value = "courseId") UUID courseId){
+    public Mono<CourseDeletedResponseDTO> deleteCourse(@PathVariable(value = "courseId") UUID courseId) throws MissingCourseException {
         log.info(COURSE_DELETE_WITH_ID, StringUtils.normalizeSpace(courseId.toString()));
         Mono<CourseDeletedResponseDTO> courseDeletedResponse =  Mono.just(courseService.deleteCourse(courseId));
         log.info(COURSE_ID_SUCCESSFULLY_DELETED,StringUtils.normalizeSpace(courseId.toString()));

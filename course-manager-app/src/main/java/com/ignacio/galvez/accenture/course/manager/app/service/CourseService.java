@@ -1,5 +1,7 @@
 package com.ignacio.galvez.accenture.course.manager.app.service;
 
+import com.ignacio.galvez.accenture.course.manager.app.Exception.MissingCourseException;
+import com.ignacio.galvez.accenture.course.manager.app.Exception.UnexpectedBehaviorException;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDTO;
@@ -10,9 +12,9 @@ import java.util.UUID;
 
 public interface CourseService {
 
-    CourseCreatedResponseDTO createCourse(CourseCreationRequestDTO courseCreationRequestDTO);
+    CourseCreatedResponseDTO createCourse(CourseCreationRequestDTO courseCreationRequestDTO) throws UnexpectedBehaviorException;
 
-    CourseDeletedResponseDTO deleteCourse(UUID courseId);
+    CourseDeletedResponseDTO deleteCourse(UUID courseId) throws MissingCourseException;
 
     Flux<CourseDTO> findAll();
 

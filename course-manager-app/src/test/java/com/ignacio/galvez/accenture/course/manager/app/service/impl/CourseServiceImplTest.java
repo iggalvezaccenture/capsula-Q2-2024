@@ -1,5 +1,6 @@
 package com.ignacio.galvez.accenture.course.manager.app.service.impl;
 
+import com.ignacio.galvez.accenture.course.manager.app.Exception.MissingCourseException;
 import com.ignacio.galvez.accenture.course.manager.app.domain.model.Course;
 import com.ignacio.galvez.accenture.course.manager.app.domain.repository.CourseRepository;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
@@ -47,7 +48,7 @@ class CourseServiceImplTest {
 
 
     @Test
-    public void givenValidData_WhenDeletingCourse_ThenCreateCourse(){
+    public void givenValidData_WhenDeletingCourse_ThenCreateCourse() throws MissingCourseException {
         UUID id = UUID.randomUUID();
         Mockito.when(this.courseRepository.findById(Mockito.any())).thenReturn(Optional.of(this.course));
         CourseDeletedResponseDTO courseDeletedResponseDTO = this.courseService.deleteCourse(id);

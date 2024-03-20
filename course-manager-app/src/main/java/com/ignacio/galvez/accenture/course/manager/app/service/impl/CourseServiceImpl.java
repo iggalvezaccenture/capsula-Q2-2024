@@ -1,6 +1,8 @@
 package com.ignacio.galvez.accenture.course.manager.app.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ignacio.galvez.accenture.course.manager.app.Exception.MissingCourseException;
+import com.ignacio.galvez.accenture.course.manager.app.Exception.UnexpectedBehaviorException;
 import com.ignacio.galvez.accenture.course.manager.app.domain.model.Course;
 import com.ignacio.galvez.accenture.course.manager.app.domain.repository.CourseRepository;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
@@ -18,6 +20,9 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * @author ignacio.galvez
+ */
 @Slf4j
 @AllArgsConstructor
 public class CourseServiceImpl implements CourseService {
@@ -31,12 +36,13 @@ public class CourseServiceImpl implements CourseService {
     private ObjectMapper mapper;
 
     @Override
-    public CourseCreatedResponseDTO createCourse(CourseCreationRequestDTO courseCreationRequestDTO) {
-        try {
+    public CourseCreatedResponseDTO createCourse(CourseCreationRequestDTO courseCreationRequestDTO) throws UnexpectedBehaviorException {
 
+        try {
             log.info(CREATING_AND_PERSISTING_COURSE_WITH_NAME_AND_CATEGORY,
                     StringUtils.normalizeSpace(courseCreationRequestDTO.getName()),
                     StringUtils.normalizeSpace(courseCreationRequestDTO.getCategory()));
+
 
             Course savedCourse = this.buildAndSaveCourseEntity(courseCreationRequestDTO);
 
@@ -49,76 +55,79 @@ public class CourseServiceImpl implements CourseService {
 
             return courseCreatedResponseDTO;
 
+
         } catch (Exception e) {
-
-            log.error(ERROR_OCCURRED_WHILE_CREATING_COURSE, StringUtils.normalizeSpace(courseCreationRequestDTO.getName()));
-            throw e;
+            log.error(AN_UNEXPECTED_EXCEPTION_OCCURRED_WITH_MESSAGE, StringUtils.normalizeSpace(e.getMessage()));
+            throw new UnexpectedBehaviorException();
         }
 
     }
 
-    @Override
-    public CourseDeletedResponseDTO deleteCourse(UUID courseId) {
-        try {
-            Optional<Course> courseOptional = this.courseRepository.findById(courseId);
-            if (courseOptional.isEmpty()) {
-                log.error("");
-                throw new RuntimeException();
-            }
-            this.courseRepository.delete(courseOptional.get());
+}
 
-
-            CourseDeletedResponseDTO courseDeletedResponseDTO = CourseDeletedResponseDTO.builder().courseDeletedId(courseId).build();
-
-
-            log.info("");
-            return courseDeletedResponseDTO;
-        } catch (Exception e) {
-            throw new RuntimeException();
+@Override
+public CourseDeletedResponseDTO deleteCourse(UUID courseId) throws MissingCourseException {
+    try {
+        Optional<Course> courseOptional = this.courseRepository.findById(courseId);
+        if (courseOptional.isEmpty()) {
+            log.error("Course not found");
+            throw new MissingCourseException();
         }
-    }
+        this.courseRepository.delete(courseOptional.get());
 
-    @Override
-    public Flux<CourseDTO> findAll() {
-        return Flux
-                .fromStream(
-                        this.courseRepository.findAll()
-                                .stream()
-                                .map(course -> this.mapper.convertValue(course,CourseDTO.class))
-                                .toList().stream());
-    }
 
-    @Override
-    public CourseDTO findCourseByName(String courseName) {
-        try{
-            log.info("");
-            Optional<Course> courseOptional = this.courseRepository.findByName(courseName);
-            if(courseOptional.isEmpty()){
-                throw new RuntimeException();
-            }
-            Course course = courseOptional.get();
-            CourseDTO courseDTO =  this.mapper.convertValue(course,CourseDTO.class);
-            log.info("");
-            return courseDTO;
-        }catch (Exception e){
-            throw new RuntimeException();
-        }
-    }
+        CourseDeletedResponseDTO courseDeletedResponseDTO = CourseDeletedResponseDTO.builder().courseDeletedId(courseId).build();
 
-    private CourseCreatedResponseDTO mapResponse(Course savedCourse) {
-        return CourseCreatedResponseDTO.builder()
-                .name(savedCourse.getName())
-                .category(savedCourse.getCategory())
-                .link(savedCourse.getLink())
-                .uuid(savedCourse.getId())
-                .build();
-    }
 
-    private Course buildAndSaveCourseEntity(CourseCreationRequestDTO courseCreationRequestDTO) {
-        Course course = Course.builder().name(courseCreationRequestDTO.getName())
-                .category(courseCreationRequestDTO.getCategory())
-                .link(courseCreationRequestDTO.getLink())
-                .documents(Collections.emptyList()).build();
-        return this.courseRepository.save(course);
+        log.info("");
+        return courseDeletedResponseDTO;
+    } catch (Exception e) {
+        throw new RuntimeException();
     }
 }
+
+@Override
+public Flux<CourseDTO> findAll() {
+    return Flux
+            .fromStream(
+                    this.courseRepository.findAll()
+                            .stream()
+                            .map(course -> this.mapper.convertValue(course, CourseDTO.class))
+                            .toList().stream());
+}
+
+@Override
+public CourseDTO findCourseByName(String courseName) {
+    try {
+        log.info("");
+        Optional<Course> courseOptional = this.courseRepository.findByName(courseName);
+        if (courseOptional.isEmpty()) {
+            throw new RuntimeException();
+        }
+        Course course = courseOptional.get();
+        CourseDTO courseDTO = this.mapper.convertValue(course, CourseDTO.class);
+        log.info("");
+        return courseDTO;
+    } catch (Exception e) {
+        throw new RuntimeException();
+    }
+}
+
+private CourseCreatedResponseDTO mapResponse(Course savedCourse) {
+    return CourseCreatedResponseDTO.builder()
+            .name(savedCourse.getName())
+            .category(savedCourse.getCategory())
+            .link(savedCourse.getLink())
+            .uuid(savedCourse.getId())
+            .build();
+}
+
+private Course buildAndSaveCourseEntity(CourseCreationRequestDTO courseCreationRequestDTO) {
+    Course course = Course.builder().name(courseCreationRequestDTO.getName())
+            .category(courseCreationRequestDTO.getCategory())
+            .link(courseCreationRequestDTO.getLink())
+            .documents(Collections.emptyList()).build();
+    return this.courseRepository.save(course);
+}
+}
+public static final String AN_UNEXPECTED_EXCEPTION_OCCURRED_WITH_MESSAGE = "An unexpected Exception occurred with message {}";
