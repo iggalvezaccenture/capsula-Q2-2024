@@ -9,13 +9,10 @@ import lombok.NoArgsConstructor;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class CourseCreationRequestDTO {
+@NoArgsConstructor
+@Builder
+public class CourseDeletedResponseDTO {
 
-    private String name;
-    private String category;
-    private String link;
-
+    String courseDeletedId;
 }
