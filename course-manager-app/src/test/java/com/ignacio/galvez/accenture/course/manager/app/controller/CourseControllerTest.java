@@ -2,10 +2,10 @@ package com.ignacio.galvez.accenture.course.manager.app.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ignacio.galvez.accenture.course.manager.app.controller.constants.Endpoints;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.response.CourseCreatedResponseDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.request.CourseCreationRequestDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDTO;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDeletedResponseDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.response.CourseDeletedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.service.CourseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -143,7 +143,7 @@ class CourseControllerTest {
                         .id(UUID.randomUUID())
                         .name("OOP programming")
                         .link("/courses/oop/")
-                        .documents(Collections.singletonList("Introduction to oriented object programming"))
+                        .documents(Collections.singletonList("Introduction to  object oriented programming"))
                         .build()
                 ));
     }

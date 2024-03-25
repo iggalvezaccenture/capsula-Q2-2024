@@ -1,12 +1,14 @@
 package com.ignacio.galvez.accenture.course.manager.app.controller;
 
 
+import com.ignacio.galvez.accenture.course.manager.app.Exception.DatabaseException;
+import com.ignacio.galvez.accenture.course.manager.app.Exception.MappingErrorException;
 import com.ignacio.galvez.accenture.course.manager.app.Exception.MissingCourseException;
 import com.ignacio.galvez.accenture.course.manager.app.controller.constants.Endpoints;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.response.CourseCreatedResponseDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.request.CourseCreationRequestDTO;
 import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDTO;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDeletedResponseDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.response.CourseDeletedResponseDTO;
 import com.ignacio.galvez.accenture.course.manager.app.service.CourseService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.util.UUID;
-
+/**
+ * @author ignacio.galvez
+ */
 @RestController
 @RequestMapping(Endpoints.COURSE_PATH)
 @AllArgsConstructor
@@ -31,7 +36,7 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
     @PostMapping(Endpoints.COURSE_CREATION)
-    public Mono<CourseCreatedResponseDTO> createCourse(@RequestBody CourseCreationRequestDTO courseCreationRequestDTO){
+    public Mono<CourseCreatedResponseDTO> createCourse(@RequestBody @Valid  CourseCreationRequestDTO courseCreationRequestDTO) throws MappingErrorException, DatabaseException {
         log.info(COURSE_CREATION_WITH_NAME_AND_CATEGORY_BEGIN, StringUtils.normalizeSpace(courseCreationRequestDTO.getName()),
                 StringUtils.normalizeSpace(courseCreationRequestDTO.getCategory()));
         Mono<CourseCreatedResponseDTO> courseCreatedResponse =  Mono.just(courseService.createCourse(courseCreationRequestDTO));
@@ -41,7 +46,7 @@ public class CourseController {
     }
 
     @DeleteMapping(Endpoints.COURSE_DELETING)
-    public Mono<CourseDeletedResponseDTO> deleteCourse(@PathVariable(value = "courseId") UUID courseId) throws MissingCourseException {
+    public Mono<CourseDeletedResponseDTO> deleteCourse(@PathVariable(value = "courseId") UUID courseId) throws MissingCourseException, MappingErrorException, DatabaseException {
         log.info(COURSE_DELETE_WITH_ID, StringUtils.normalizeSpace(courseId.toString()));
         Mono<CourseDeletedResponseDTO> courseDeletedResponse =  Mono.just(courseService.deleteCourse(courseId));
         log.info(COURSE_ID_SUCCESSFULLY_DELETED,StringUtils.normalizeSpace(courseId.toString()));
@@ -57,7 +62,7 @@ public class CourseController {
     }
 
     @GetMapping(Endpoints.COURSE)
-    public Mono<CourseDTO> getCourse(@PathVariable(value = "name") String courseName){
+    public Mono<CourseDTO> getCourse(@PathVariable(value = "name") String courseName) throws MissingCourseException, MappingErrorException {
         log.info("querying course with name {} ",StringUtils.normalizeSpace(courseName));
         Mono<CourseDTO> response = Mono.just(this.courseService.findCourseByName(courseName));
         log.info("course with name {} successfully  retrieved",StringUtils.normalizeSpace(courseName));

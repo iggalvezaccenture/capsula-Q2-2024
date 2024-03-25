@@ -1,4 +1,4 @@
-package com.ignacio.galvez.accenture.course.manager.app.dto;
+package com.ignacio.galvez.accenture.course.manager.app.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,18 +7,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import javax.validation.constraints.NotBlank;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Data
-public class CourseCreatedResponseDTO {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CourseCreationRequestDTO {
 
-    private UUID uuid;
+    @NotBlank
     private String name;
+    @NotBlank
     private String category;
+    @NotBlank
     private String link;
 
 }

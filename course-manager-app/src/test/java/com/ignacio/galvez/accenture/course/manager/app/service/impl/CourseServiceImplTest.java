@@ -1,11 +1,13 @@
 package com.ignacio.galvez.accenture.course.manager.app.service.impl;
 
+import com.ignacio.galvez.accenture.course.manager.app.Exception.DatabaseException;
+import com.ignacio.galvez.accenture.course.manager.app.Exception.MappingErrorException;
 import com.ignacio.galvez.accenture.course.manager.app.Exception.MissingCourseException;
 import com.ignacio.galvez.accenture.course.manager.app.domain.model.Course;
 import com.ignacio.galvez.accenture.course.manager.app.domain.repository.CourseRepository;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreatedResponseDTO;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseCreationRequestDTO;
-import com.ignacio.galvez.accenture.course.manager.app.dto.CourseDeletedResponseDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.response.CourseCreatedResponseDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.request.CourseCreationRequestDTO;
+import com.ignacio.galvez.accenture.course.manager.app.dto.response.CourseDeletedResponseDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,7 @@ class CourseServiceImplTest {
     }
 
     @Test
-    public void givenValidData_WhenCreatingCourse_ThenCreateCourse(){
+    public void givenValidData_WhenCreatingCourse_ThenCreateCourse() throws MappingErrorException, DatabaseException {
         Mockito.when(this.courseRepository.save(Mockito.any())).thenReturn(this.course);
         Mockito.when(this.course.getId()).thenReturn(UUID.randomUUID());
         CourseCreatedResponseDTO courseCreatedResponseDTO = this.courseService.createCourse(this.courseCreationRequestDTO);
@@ -48,7 +50,7 @@ class CourseServiceImplTest {
 
 
     @Test
-    public void givenValidData_WhenDeletingCourse_ThenCreateCourse() throws MissingCourseException {
+    public void givenValidData_WhenDeletingCourse_ThenCreateCourse() throws MissingCourseException, DatabaseException, MappingErrorException {
         UUID id = UUID.randomUUID();
         Mockito.when(this.courseRepository.findById(Mockito.any())).thenReturn(Optional.of(this.course));
         CourseDeletedResponseDTO courseDeletedResponseDTO = this.courseService.deleteCourse(id);

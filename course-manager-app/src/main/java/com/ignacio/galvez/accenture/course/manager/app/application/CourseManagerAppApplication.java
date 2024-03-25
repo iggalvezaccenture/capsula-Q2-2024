@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
+/**
+ * @author ignacio.galvez
+ */
 @EnableJpaRepositories(CourseManagerAppApplication.PACKAGES)
 @ComponentScan(basePackages = { CourseManagerAppApplication.PACKAGES })
 @EntityScan(CourseManagerAppApplication.PACKAGES)

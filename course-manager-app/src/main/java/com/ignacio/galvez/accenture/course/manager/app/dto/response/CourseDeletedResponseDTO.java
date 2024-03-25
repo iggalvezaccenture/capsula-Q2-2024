@@ -1,4 +1,4 @@
-package com.ignacio.galvez.accenture.course.manager.app.dto;
+package com.ignacio.galvez.accenture.course.manager.app.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
